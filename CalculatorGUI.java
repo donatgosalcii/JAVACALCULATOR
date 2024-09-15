@@ -6,35 +6,24 @@ import java.awt.event.ActionListener;
 public class CalculatorGUI extends JFrame implements ActionListener {
     private JTextField textField;
     private CalculatorLogic logic;
-    private boolean waitingForOperand = true; // For handling multiple operations
-    private boolean resultDisplayed = false;  // To handle further operations after result
-
+    private boolean waitingForOperand = true;
+    private boolean resultDisplayed = false;
     public CalculatorGUI(CalculatorLogic logic) {
         this.logic = logic;
-
-        // Initialize the frame
         setTitle("Advanced Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 700); // Adjust size if needed
-        setLocationRelativeTo(null); // Center the frame on the screen
-
-        // Create and customize the text field
+        setSize(400, 700);
+        setLocationRelativeTo(null);
         textField = new JTextField();
-        textField.setEditable(true); // Allow editing
+        textField.setEditable(true);
         textField.setHorizontalAlignment(JTextField.RIGHT);
         textField.setFont(new Font("Arial", Font.PLAIN, 24));
         textField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-
-        // Layout for the frame
         setLayout(new BorderLayout());
         add(textField, BorderLayout.NORTH);
-
-        // Create a panel for buttons
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(7, 4, 5, 5)); // Adjust layout for more buttons
+        panel.setLayout(new GridLayout(7, 4, 5, 5));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Button labels including memory and advanced functions
         String[] buttons = {
                 "7", "8", "9", "/",
                 "4", "5", "6", "*",
@@ -44,15 +33,11 @@ public class CalculatorGUI extends JFrame implements ActionListener {
                 "cos", "tan", "log", "log10",
                 "MC", "MR", "MS", "Backspace"
         };
-
-        // Button customization
         for (String text : buttons) {
             JButton button = new JButton(text);
             button.addActionListener(this);
             button.setFont(new Font("Arial", Font.BOLD, 18));
             button.setFocusPainted(false);
-
-            // Color customization based on button type
             if (text.equals("C")) {
                 button.setBackground(Color.RED);
                 button.setForeground(Color.WHITE);
@@ -72,24 +57,16 @@ public class CalculatorGUI extends JFrame implements ActionListener {
                 button.setBackground(Color.WHITE);
                 button.setForeground(Color.BLACK);
             }
-
             panel.add(button);
         }
-
-        // Add panel to the frame
         add(panel, BorderLayout.CENTER);
-
-        // Set frame visibility
         setVisible(true);
     }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-
         try {
             if (command.charAt(0) >= '0' && command.charAt(0) <= '9' || command.equals(".")) {
-                // Append number or decimal point to the display
                 if (resultDisplayed) {
                     textField.setText(command);
                     resultDisplayed = false;
@@ -98,7 +75,6 @@ public class CalculatorGUI extends JFrame implements ActionListener {
                 }
                 waitingForOperand = false;
             } else if (command.equals("+") || command.equals("-") || command.equals("*") || command.equals("/")) {
-                // Store the operation and update the display
                 if (!waitingForOperand || resultDisplayed) {
                     logic.setOperand1(Double.parseDouble(getCurrentOperand()));
                     logic.setOperator(command);
@@ -106,21 +82,19 @@ public class CalculatorGUI extends JFrame implements ActionListener {
                     waitingForOperand = true;
                     resultDisplayed = false;
                 } else {
-                    // Replace operator if pressed twice without entering a number
                     logic.setOperator(command);
                     String currentText = textField.getText();
                     int lastOperatorIndex = Math.max(currentText.lastIndexOf("+"), Math.max(currentText.lastIndexOf("-"), Math.max(currentText.lastIndexOf("*"), currentText.lastIndexOf("/"))));
                     textField.setText(currentText.substring(0, lastOperatorIndex + 1) + command + " ");
                 }
             } else if (command.equals("=")) {
-                // Calculate result
                 if (!waitingForOperand) {
                     logic.setOperand2(Double.parseDouble(getCurrentOperand()));
                     double result = logic.calculate();
-                    textField.setText(String.valueOf(result)); // Display only the result
-                    logic.setOperand1(result); // Store result as the current operand
+                    textField.setText(String.valueOf(result));
+                    logic.setOperand1(result);
                     waitingForOperand = true;
-                    resultDisplayed = true; // Flag to indicate result is displayed
+                    resultDisplayed = true;
                 }
             } else if (command.equals("C")) {
                 logic.reset();
@@ -130,8 +104,8 @@ public class CalculatorGUI extends JFrame implements ActionListener {
             } else if (command.equals("sqrt")) {
                 double number = Double.parseDouble(textField.getText());
                 double result = logic.squareRoot(number);
-                textField.setText(String.valueOf(result)); // Display only the result
-                logic.setOperand1(result); // Store result as the current operand
+                textField.setText(String.valueOf(result));
+                logic.setOperand1(result);
                 waitingForOperand = true;
                 resultDisplayed = true;
             } else if (command.equals("^")) {
@@ -141,60 +115,56 @@ public class CalculatorGUI extends JFrame implements ActionListener {
                 waitingForOperand = true;
                 resultDisplayed = false;
             }
-
-            // Trigonometric and logarithmic functions
             else if (command.equals("sin")) {
                 double number = Double.parseDouble(textField.getText());
                 double result = logic.sine(number);
-                textField.setText(String.valueOf(result)); // Display only the result
-                logic.setOperand1(result); // Store result as the current operand
+                textField.setText(String.valueOf(result));
+                logic.setOperand1(result);
                 waitingForOperand = true;
                 resultDisplayed = true;
             } else if (command.equals("cos")) {
                 double number = Double.parseDouble(textField.getText());
                 double result = logic.cosine(number);
-                textField.setText(String.valueOf(result)); // Display only the result
-                logic.setOperand1(result); // Store result as the current operand
+                textField.setText(String.valueOf(result));
+                logic.setOperand1(result);
                 waitingForOperand = true;
                 resultDisplayed = true;
             } else if (command.equals("tan")) {
                 double number = Double.parseDouble(textField.getText());
                 double result = logic.tangent(number);
-                textField.setText(String.valueOf(result)); // Display only the result
-                logic.setOperand1(result); // Store result as the current operand
+                textField.setText(String.valueOf(result));
+                logic.setOperand1(result);
                 waitingForOperand = true;
                 resultDisplayed = true;
             } else if (command.equals("log")) {
                 double number = Double.parseDouble(textField.getText());
                 double result = logic.log(number);
-                textField.setText(String.valueOf(result)); // Display only the result
-                logic.setOperand1(result); // Store result as the current operand
+                textField.setText(String.valueOf(result));
+                logic.setOperand1(result);
                 waitingForOperand = true;
                 resultDisplayed = true;
             } else if (command.equals("log10")) {
                 double number = Double.parseDouble(textField.getText());
                 double result = logic.log10(number);
-                textField.setText(String.valueOf(result)); // Display only the result
-                logic.setOperand1(result); // Store result as the current operand
+                textField.setText(String.valueOf(result));
+                logic.setOperand1(result);
                 waitingForOperand = true;
                 resultDisplayed = true;
             }
-
-            // Memory function handling
-            else if (command.equals("MC")) {  // Memory Clear
+            else if (command.equals("MC")) {
                 logic.clearMemory();
                 textField.setText("MC");
                 resultDisplayed = false;
-            } else if (command.equals("MR")) {  // Memory Recall
+            } else if (command.equals("MR")) {
                 double memoryValue = logic.recallFromMemory();
                 textField.setText(String.valueOf(memoryValue));
                 resultDisplayed = false;
-            } else if (command.equals("MS")) {  // Memory Store
+            } else if (command.equals("MS")) {
                 double value = Double.parseDouble(textField.getText());
                 logic.storeInMemory(value);
                 textField.setText("MS = " + value);
                 resultDisplayed = false;
-            } else if (command.equals("Backspace")) {  // Backspace functionality
+            } else if (command.equals("Backspace")) {
                 String currentText = textField.getText();
                 if (currentText.length() > 0) {
                     int lastOperatorIndex = Math.max(currentText.lastIndexOf("+"), Math.max(currentText.lastIndexOf("-"), Math.max(currentText.lastIndexOf("*"), currentText.lastIndexOf("/"))));
@@ -215,7 +185,6 @@ public class CalculatorGUI extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     private String getCurrentOperand() {
         String text = textField.getText();
         int lastSpaceIndex = text.lastIndexOf(" ");
